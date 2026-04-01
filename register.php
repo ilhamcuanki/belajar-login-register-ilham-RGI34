@@ -1,31 +1,43 @@
 <?php
-// Panggil koneksi database
 include 'koneksi.php';
-
-
 if (isset($_POST['submit_register'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
 
-    // Query untuk menyimpan data (Tanpa Hashing & Prepared Statement)
-    $query = "INSERT INTO users (username, password) VALUES ('$username', '$password')";
-    $hasil = mysqli_query($koneksi, $query);
+    // 1. PREPARE: Buat kerangka query dengan tanda tanya (?)
+    $query = "INSERT INTO users (username, password) VALUES (?, ?)";
+    $stmt = mysqli_prepare($koneksi, $query);
 
 
-    if ($hasil) {
-        echo "<script>alert('Registrasi berhasil! Silakan login.'); window.location='login.php';</script>";
+    if ($stmt) {
+        // 2. BIND PARAMETER: Masukkan data ke tanda tanya
+        // "ss" berarti ada 2 data bertipe String (username dan password)
+        mysqli_stmt_bind_param($stmt, "ss", $username, $password);
+
+
+        // 3. EXECUTE: Jalankan query yang sudah disatukan dengan data
+        $hasil = mysqli_stmt_execute($stmt);
+
+
+        if ($hasil) {
+            echo "<script>alert('Registrasi berhasil!'); window.location='login.php';</script>";
+        } else {
+            echo "Gagal mendaftar: " . mysqli_error($koneksi);
+        }
+
+
+        // Tutup statement untuk menghemat memori server
+        mysqli_stmt_close($stmt);
     } else {
-        echo "Gagal mendaftar!";
+        echo "Query gagal disiapkan!";
     }
 }
 ?>
-
-
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Register</title>
+    <title>Register (Prepared Statement)</title>
     <style>
         body { font-family: Arial; text-align: center; margin-top: 50px; }
         form { display: inline-block; border: 1px solid #ccc; padding: 20px; border-radius: 5px; }
@@ -44,7 +56,6 @@ if (isset($_POST['submit_register'])) {
 
 
     <script>
-        // Validasi menggunakan JavaScript murni
         function validasiForm() {
             var user = document.getElementById("username").value;
             var pass = document.getElementById("password").value;
