@@ -1,15 +1,23 @@
 <?php
-// koneksi.php
+// koneksi.php (Versi PDO)
 $host = "localhost";
 $user = "root";
-$pass = ""; // Kosongkan jika XAMPP default
+$pass = "";
 $db   = "db_belajar";
 
 
-$koneksi = mysqli_connect($host, $user, $pass, $db);
+// DSN (Data Source Name)
+$dsn = "mysql:host=$host;dbname=$db;charset=utf8mb4";
 
 
-if (!$koneksi) {
-    die("Koneksi gagal: " . mysqli_connect_error());
+try {
+    // Membuat koneksi PDO baru
+    $pdo = new PDO($dsn, $user, $pass);
+   
+    // Atur mode error PDO ke Exception agar mudah dilacak jika ada salah query
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    // Jika koneksi gagal, hentikan program dan tampilkan pesan
+    die("Koneksi database gagal: " . $e->getMessage());
 }
 ?>

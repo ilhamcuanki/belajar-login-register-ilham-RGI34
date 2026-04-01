@@ -1,4 +1,5 @@
 <?php
+// proses_login.php (Versi PDO)
 session_start();
 include 'koneksi.php';
 
@@ -8,30 +9,40 @@ if (isset($_POST['submit_login'])) {
     $password = $_POST['password'];
 
 
-    // Prepared Statement
-    $query = "SELECT * FROM users WHERE username=? AND password=?";
-    $stmt = mysqli_prepare($koneksi, $query);
+    try {
+        // 1. PREPARE: Siapkan kerangka seleksi
+        $query = "SELECT * FROM users WHERE username = :username AND password = :password";
+        $stmt = $pdo->prepare($query);
 
 
-    if ($stmt) {
-        mysqli_stmt_bind_param($stmt, "ss", $username, $password);
-        mysqli_stmt_execute($stmt);
-        $hasil = mysqli_stmt_get_result($stmt);
+        // 2 & 3. EXECUTE: Jalankan query dengan memasukkan data ke parameter
+        $stmt->execute([
+            ':username' => $username,
+            ':password' => $password
+        ]);
 
 
-        if (mysqli_num_rows($hasil) > 0) {
-            // Data cocok, buat sesi
-            $_SESSION['username'] = $username;
+        // 4. FETCH: Tarik hasil (jika ada)
+        // FETCH_ASSOC berarti data ditarik sebagai array asosiatif (berdasarkan nama kolom)
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+
+        // Jika $user berisi data (tidak false)
+        if ($user) {
+            // Data cocok, buat sesi. Kita bahkan bisa mengambil ID dari database sekarang.
+            $_SESSION['username'] = $user['username'];
             $_SESSION['status_login'] = true;
             header("Location: index.php");
         } else {
-            // Data tidak cocok, lempar kembali ke login.php dengan membawa pesan gagal
+            // Data tidak cocok
             header("Location: login.php?pesan=gagal");
         }
-        mysqli_stmt_close($stmt);
+    } catch (PDOException $e) {
+        die("Error sistem: " . $e->getMessage());
     }
 } else {
     header("Location: login.php");
     exit;
 }
 ?>
+
