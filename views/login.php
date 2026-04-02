@@ -1,15 +1,7 @@
-<?php
-session_start();
-// Jika sudah login, cegah akses ke halaman ini
-if (isset($_SESSION['status_login'])) {
-    header("Location: index.php");
-    exit;
-}
-?>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login - Tampilan</title>
+    <title>Login - MVC</title>
     <style>
         body { font-family: Arial; text-align: center; margin-top: 50px; }
         form { display: inline-block; border: 1px solid #ccc; padding: 20px; border-radius: 5px; background-color: #f9f9f9; }
@@ -20,25 +12,14 @@ if (isset($_SESSION['status_login'])) {
 </head>
 <body>
     <h2>Halaman Login</h2>
-
-
-    <?php
-    if (isset($_GET['pesan'])) {
-        if ($_GET['pesan'] == "gagal") {
-            echo "<div class='error'>Username atau Password tidak cocok!</div>";
-        }
-    }
-    ?>
-
-
-    <form method="POST" action="proses_login.php" onsubmit="return validasiLogin()">
+    <?php if (isset($pesan_error)) { echo "<p style='color:red;'>$pesan_error</p>"; } ?>
+   
+    <form method="POST" action="index.php?action=login" onsubmit="return validasiLogin()">
         <input type="text" id="username_login" name="username" placeholder="Username"><br>
         <input type="password" id="password_login" name="password" placeholder="Password"><br>
-        <button type="submit" name="submit_login">Login</button>
-        <p>Belum punya akun? <a href="register.php">Daftar di sini</a></p>
+        <button type="submit">Login</button>
+        <p>Belum punya akun? <a href="index.php?action=register">Daftar</a></p>
     </form>
-
-
     <script src="assets/js/validasi.js"></script>
 </body>
 </html>
