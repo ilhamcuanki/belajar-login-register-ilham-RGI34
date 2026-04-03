@@ -6,11 +6,12 @@ class AuthController extends BaseController {
     private $userModel;
 
     public function __construct() {
-        // Instansiasi model saat controller dipanggil
         $this->userModel = new UserModel();
     }
 
     public function login() {
+        // Pengecekan if (isset($_SESSION...)) SUDAH DIHAPUS. Diurus Middleware!
+        
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $username = $_POST['username'];
             $password = $_POST['password'];
@@ -22,7 +23,6 @@ class AuthController extends BaseController {
                 $_SESSION['status_login'] = true;
                 $this->redirect('dashboard');
             } else {
-                // Gunakan fungsi view dari BaseController dan lempar data error
                 $this->view('login', ['error_message' => 'Username atau Password salah!']);
             }
         } else {
@@ -31,6 +31,8 @@ class AuthController extends BaseController {
     }
 
     public function register() {
+        // Pengecekan if (isset($_SESSION...)) SUDAH DIHAPUS. Diurus Middleware!
+
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $username = $_POST['username'];
             $password = $_POST['password'];
@@ -38,7 +40,7 @@ class AuthController extends BaseController {
             if ($this->userModel->register($username, $password)) {
                 echo "<script>alert('Registrasi berhasil!'); window.location='index.php?action=login';</script>";
             } else {
-                $this->view('register', ['error_message' => 'Gagal mendaftar, username mungkin sudah ada.']);
+                $this->view('register', ['error_message' => 'Gagal mendaftar, username sudah dipakai.']);
             }
         } else {
             $this->view('register');
@@ -46,9 +48,7 @@ class AuthController extends BaseController {
     }
 
     public function dashboard() {
-        if (!isset($_SESSION['status_login'])) {
-            $this->redirect('login');
-        }
+        // Pengecekan if (!isset($_SESSION...)) SUDAH DIHAPUS. Diurus Middleware!
         $this->view('dashboard');
     }
 
