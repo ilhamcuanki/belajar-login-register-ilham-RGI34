@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login - MVC</title>
+    <title>Login - OOP MVC</title>
     <style>
         body { font-family: Arial; text-align: center; margin-top: 50px; }
         form { display: inline-block; border: 1px solid #ccc; padding: 20px; border-radius: 5px; background-color: #f9f9f9; }
@@ -12,7 +12,7 @@
 </head>
 <body>
     <h2>Halaman Login</h2>
-    <?php if (isset($pesan_error)) { echo "<p style='color:red;'>$pesan_error</p>"; } ?>
+    <?php if (isset($error_message)) { echo "<p style='color:red;'>$error_message</p>"; } ?>
    
     <form method="POST" action="index.php?action=login" onsubmit="return validasiLogin()">
         <input type="text" id="username_login" name="username" placeholder="Username"><br>
