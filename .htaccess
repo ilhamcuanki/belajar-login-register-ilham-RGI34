@@ -1,0 +1,6 @@
+RewriteEngine On
+# Jika file atau folder fisik benar-benar ada (seperti CSS/JS), biarkan diakses langsung
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+# Jika tidak ada, lempar semua urusan ke index.php
+RewriteRule ^(.*)$ index.php [QSA,L]
